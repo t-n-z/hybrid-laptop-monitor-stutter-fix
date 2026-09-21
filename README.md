@@ -32,6 +32,11 @@ finally tracked down with the help of **Claude**, by instrumenting the machine p
 frame-timing captures of the broken and healthy states taken minutes apart, full display-state snapshots diffed
 against each other, and a watcher that timestamped the exact moment the ghost display appeared.
 
+**The cure itself is not new.** People have been disabling and re-enabling the Intel graphics adapter to cure this
+since at least 2019 (Dell, Acer and Lenovo community threads, a PSA on r/LenovoLegion, a Super User question asking for
+exactly this script; see [`RELATED.md`](RELATED.md)). What was missing was **why**: what triggers it, what state the
+machine is in, and proof. That is what this repo adds.
+
 This repo exists to help anyone else living with it, and to give the engineers who can actually fix it
 (Microsoft, Intel, NVIDIA, laptop makers) a clean reproduction.
 
@@ -91,12 +96,25 @@ powershell -ExecutionPolicy Bypass -File .\fix\Install-Hotkey.ps1            # d
 powershell -ExecutionPolicy Bypass -File .\fix\Install-Hotkey.ps1 -Hotkey Ctrl+Alt+G
 ```
 
-After that, **Ctrl+Alt+D** fixes it: about 3 seconds, a 1-2 second blink, smooth. It uses a Windows scheduled task
-(on demand only, it never runs by itself) plus a Start Menu shortcut hotkey. No AutoHotkey or other software. The
-script it runs lives in `%ProgramData%\GhostDisplayFix`, locked so only administrators can change it. If the hotkey
-does nothing right after installing, sign out and back in once.
+After that, **Ctrl+Alt+D** fixes it: about 3 seconds, a 1-2 second blink, smooth. It works straight away, no sign-out.
 
-Remove everything: `.\fix\Install-Hotkey.ps1 -Uninstall`.
+How it works, so you know what you are installing:
+
+- **A small hotkey listener** (`HotkeyListener.ps1`) starts at logon **without admin rights**. It registers the key
+  combination with Windows, and all it can do when you press it is ask Task Scheduler to run one task. It costs one
+  hidden `powershell.exe`, about **75 MB of RAM**, and no CPU while idle.
+- **An on-demand scheduled task** runs `Fix-GhostDisplay.ps1` with admin rights. It has no trigger, so it never runs
+  by itself.
+- Both scripts live in `%ProgramData%\GhostDisplayFix`, locked so only administrators can change them (the task runs
+  elevated, so its script must not be user-writable).
+- The installer refuses a key combination another program already uses, and checks after installing that the
+  listener really holds the key before reporting success.
+
+No AutoHotkey or other software. Remove everything: `.\fix\Install-Hotkey.ps1 -Uninstall`.
+
+> **Do not restart Explorer (`explorer.exe`) straight after running the fix.** During testing, killing Explorer
+> within a minute of an adapter cycle locked the session up and needed a hard power-off. Running the fix on its own
+> was fine every time (six runs on the test machine).
 
 ---
 
@@ -229,6 +247,11 @@ The diagnostic kit used to capture everything is in [`diagnostics/jitter-lab/`](
 
 - **Proven on one machine.** The mechanism is general enough that other hybrid laptops are very likely affected, but
   that is an inference. Run the detector before trusting the fix.
+- **The published scripts were tested end to end on that machine:** the detector reported `GHOST` during a live
+  stutter and `CLEAN` after the fix; the fix ran through the scheduled task with no UAC prompt; the hotkey listener
+  triggered it two seconds after the key press; install, reinstall-over-a-broken-install and uninstall were all
+  verified. (The first hotkey design, a Windows shortcut key, was never registered by Windows even after a fresh
+  logon, which is why the listener replaced it.)
 - **This is a workaround, not a fix.** The real fix belongs in Windows or the Intel driver. See the engineer section.
 - **No driver changes are recommended.** Nothing here points at a specific driver version, and none was changed to
   find it.

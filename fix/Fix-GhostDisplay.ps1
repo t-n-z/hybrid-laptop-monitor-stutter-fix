@@ -43,19 +43,24 @@ param(
     [ValidateRange(1, 30)] [int] $OffSeconds = 3
 )
 
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+$elevated  = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
 $logDir = Join-Path $env:ProgramData 'GhostDisplayFix'
 $log    = Join-Path $logDir 'fix.log'
 function Write-Log($m) {
     $line = '{0} {1}' -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $m
     Write-Host $line
+    # Only elevated runs touch ProgramData. An unelevated run creating the
+    # folder first would leave it user-owned before the installer locks it.
+    if (-not $elevated) { return }
     try {
         if (-not (Test-Path -LiteralPath $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
         Add-Content -LiteralPath $log -Value $line
     } catch { }
 }
 
-$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+if (-not $elevated) {
     Write-Log 'ABORT - needs an elevated PowerShell (Run as administrator), or install the hotkey with Install-Hotkey.ps1.'
     exit 1
 }
