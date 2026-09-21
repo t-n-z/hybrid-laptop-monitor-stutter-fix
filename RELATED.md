@@ -15,6 +15,22 @@ This list is being extended. Know of another thread? Open an issue or a pull req
 - Microsoft Q&A: [External monitor stuttering](https://learn.microsoft.com/en-us/answers/questions/3903230/external-monitor-stuttering)
 - Framework Community: [Stuttering cursor in Windows desktop on external displays](https://community.frame.work/t/stuttering-cursor-in-windows-desktop-on-external-displays/45645)
 
+## Earlier reports where the adapter-cycle cure was already found
+
+People had discovered that disabling and re-enabling the Intel adapter cures this years ago, without knowing why:
+
+- Dell Community: [Boot with external monitor defaults to integrated graphics card](https://www.dell.com/community/en/conversations/alienware/boot-with-external-monitor-defaults-to-integrated-graphics-card/647f8323f4ccf8a8de1ecb2b) (2019, Alienware m15)
+- Dell Community: [M17 runs slow when lid closed](https://www.dell.com/community/en/conversations/alienware/m17-runs-slow-when-lid-closed/647f837af4ccf8a8de24ce26) (2019)
+- Dell Community: [Inspiron G5 15 5500, external monitor, lid closed, low fps](https://www.dell.com/community/en/conversations/inspiron/inspiron-g5-15-5500-external-monitor-lid-closed-low-fps/647f8e40f4ccf8a8def14a7a) (2020)
+- Acer Community: [Predator Helios 300 lag with external display when the lid is closed](https://community.acer.com/en/discussion/545751/acer-predator-helios-300-lag-problems-with-external-display-throught-hdmi-when-i-close-the-lid) (archived, 2018-2020)
+- Lenovo Community: [External monitor stuttering in second-screen-only mode with hybrid mode enabled (Y540)](https://forums.lenovo.com/t5/Gaming-Laptops/External-monitor-stuttering-when-in-second-screen-only-mode-and-hybrid-mode-enabled-Lenovo-Y540/m-p/5045807) (2020)
+- NVIDIA forums: [Laptop external monitor Intel/NVIDIA issue fix](https://www.nvidia.com/en-us/geforce/forums/geforce-graphics-cards/5/297279/laptop-external-monitor-intelnvidia-issue-fix/) and [Laptop 1070 external monitor stutter](https://www.nvidia.com/en-us/geforce/forums/geforce-graphics-cards/5/257428/laptop-1070-external-monitor-stutter/)
+- NVIDIA forums: [Whole system choppy after monitor wakes from sleep](https://www.nvidia.com/en-us/geforce/forums/game-ready-drivers/13/276896/whole-system-choppy-after-monitor-wakes-from-sleep/)
+- Reddit r/LenovoLegion: [PSA: fix stutter when connecting an external monitor in "second screen only"](https://www.reddit.com/r/LenovoLegion/comments/zhza0i/psa_fix_stutter_when_connect_external_monitor_in/)
+- Super User: [Is there a Windows script to disable & enable the Intel GPU?](https://superuser.com/questions/849398/is-there-a-windows-script-to-disable-enable-the-intel-gpu)
+- Tom's Hardware: [External monitor lag when laptop lid is closed?](https://forums.tomshardware.com/threads/external-monitor-lag-when-laptop-lid-is-closed.3696352/)
+- Microsoft Tech Community: [Win11 animations stutter on hybrid GPU and when using two monitors](https://techcommunity.microsoft.com/discussions/windows11/bug-win11-animations-stutter-on-hybrid-gpu-and-when-using-two-monitors-on-nvidia/3672276)
+
 ## Desktop Window Manager stutter that only a reboot fixes
 
 - Microsoft Q&A: [Windows DWM issue](https://learn.microsoft.com/en-us/answers/questions/5560590/windows-dwm-issue)
