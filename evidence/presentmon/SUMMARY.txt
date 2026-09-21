@@ -1,0 +1,14 @@
+=== 1-stutter-occurred-naturally.csv ===
+dwm.exe     frames= 1386 | present med=6.99 sd=19.56 | display-gap med=6.95 p95=62.56 max=69.57 | gaps>20ms= 166 | not-displayed=0 (0%) | mode=Hardware: Legacy Flip | hybrid=0
+claude.exe  frames= 2876 | present med=6.94 sd=0.34 | display-gap med=6.95 p95=62.56 max=76.38 | gaps>20ms= 166 | not-displayed=1492 (52%) | mode=Composed: Flip | hybrid=0
+  stall lengths: 69ms x61  62ms x55  63ms x44  70ms x5  28ms x1
+  stall period : med=120.1 ms  p5=118.9  p95=121.8
+=== 2-stutter-reproduced-monitor-off-on.csv ===
+dwm.exe     frames= 1380 | present med=6.96 sd=21.94 | display-gap med=6.95 p95=76.40 max=118.07 | gaps>20ms= 144 | not-displayed=0 (0%) | mode=Hardware: Legacy Flip | hybrid=0
+claude.exe  frames= 2813 | present med=6.95 sd=4.38 | display-gap med=6.95 p95=76.40 max=173.63 | gaps>20ms= 141 | not-displayed=1456 (52%) | mode=Composed: Flip | hybrid=0
+  stall lengths: 76ms x100  83ms x19  69ms x13  77ms x4  21ms x2
+  stall period : med=141.1 ms  p5=135.1  p95=144.4
+=== 3-healthy-after-fix.csv ===
+dwm.exe     frames= 2876 | present med=6.94 sd=0.21 | display-gap med=6.94 p95=6.99 max=7.56 | gaps>20ms=   0 | not-displayed=0 (0%) | mode=Hardware: Legacy Flip | hybrid=0
+claude.exe  frames= 2875 | present med=6.94 sd=0.39 | display-gap med=6.94 p95=6.99 max=13.86 | gaps>20ms=   0 | not-displayed=1 (0%) | mode=Composed: Flip | hybrid=0
+  no DWM stalls > 20 ms

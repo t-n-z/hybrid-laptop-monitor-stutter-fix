@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  jitterlab.wprp - a deliberately small WPR profile for the docked-display
+  stutter investigation on a hybrid-graphics laptop.
+
+  WHY A CUSTOM PROFILE: the built-in GPU and DesktopComposition profiles are
+  uncapped and can produce several hundred megabytes per capture, which would
+  blow the whole disk budget in one go. This profile pins the buffers at
+  64 MB (1024 KB x 64) in memory, so an ETL cannot exceed roughly that size.
+
+  Providers chosen for one question: is DWM keeping up with the display?
+    DxgKrnl  - presents, flip queue, vblank/VSync, DMA packets, adapter events
+    Dwm-Core - the compositor's own frame lifecycle
+    Dwm-Api  - what applications ask of DWM
+    DXGI     - swap chain creation and presentation mode changes
+
+  Usage (elevated):
+    wpr -start "<kit>\profiles\jitterlab.wprp!JitterLab.Light"
+    wpr -stop  "<datadir>\traces\trace-<stamp>-jitter.etl"
+
+  If this profile ever fails to load, the kit falls back to the built-in
+  DesktopComposition and GPU profiles automatically. Those are uncapped, so
+  check the resulting file size.
+-->
+<WindowsPerformanceRecorder Version="1.0" Author="JitterLab" Copyright="none" Company="none">
+  <Profiles>
+
+    <EventCollector Id="EC_JitterLab" Name="JitterLabCollector">
+      <!-- 1024 KB x 64 buffers = 64 MB ceiling, held in memory -->
+      <BufferSize Value="1024" />
+      <Buffers Value="64" />
+    </EventCollector>
+
+    <EventProvider Id="EP_DxgKrnl" Name="Microsoft-Windows-DxgKrnl" Level="5">
+      <Keywords>
+        <Keyword Value="0xFFFF" />
+      </Keywords>
+    </EventProvider>
+
+    <EventProvider Id="EP_DwmCore" Name="Microsoft-Windows-Dwm-Core" Level="5" />
+    <EventProvider Id="EP_DwmApi"  Name="Microsoft-Windows-Dwm-Api"  Level="5" />
+    <EventProvider Id="EP_DXGI"    Name="Microsoft-Windows-DXGI"     Level="5" />
+
+    <Profile Id="JitterLab.Light.Verbose.Memory"
+             Name="JitterLab.Light"
+             Description="Capped 64 MB capture of DWM composition and DxgKrnl present/vblank activity"
+             DetailLevel="Verbose"
+             LoggingMode="Memory">
+      <Collectors>
+        <EventCollectorId Value="EC_JitterLab">
+          <EventProviders>
+            <EventProviderId Value="EP_DxgKrnl" />
+            <EventProviderId Value="EP_DwmCore" />
+            <EventProviderId Value="EP_DwmApi" />
+            <EventProviderId Value="EP_DXGI" />
+          </EventProviders>
+        </EventCollectorId>
+      </Collectors>
+    </Profile>
+
+    <Profile Id="JitterLab.Light.Light.Memory"
+             Name="JitterLab.Light"
+             Description="Capped 64 MB capture of DWM composition and DxgKrnl present/vblank activity"
+             DetailLevel="Light"
+             LoggingMode="Memory"
+             Base="JitterLab.Light.Verbose.Memory" />
+
+  </Profiles>
+</WindowsPerformanceRecorder>

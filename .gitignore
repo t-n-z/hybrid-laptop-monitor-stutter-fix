@@ -1,0 +1,5 @@
+# PresentMon is Intel's binary under Intel's licence - download it, do not commit it
+diagnostics/jitter-lab/bin/*.exe
+# self-test scratch and pack output
+diagnostics/jitter-lab/.selftest/
+*.zip
