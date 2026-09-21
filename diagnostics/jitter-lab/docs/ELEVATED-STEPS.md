@@ -39,7 +39,7 @@ Verify before relying on it:
 .\jitterlab.cmd presentmon jitter
 ```
 
-Each runs about 20 seconds. **Drag a window around and scroll while they run** —
+Each runs about 20 seconds. **Drag a window around and scroll while they run**:
 an idle desktop produces a trace of nothing.
 
 Then fix with Ctrl+Alt+D and capture the healthy twin straight away:
@@ -65,7 +65,7 @@ wpr -cancel          # discard without writing an ETL
 ## Optional: tracing without a UAC prompt
 
 Same pattern as the existing `JitterFixIGPU` task, which is how Ctrl+Alt+D
-already runs elevated with no prompt. **Not created — this is here for when
+already runs elevated with no prompt. **Not created: this is here for when
 you want it.**
 
 ```powershell
@@ -107,7 +107,7 @@ Flag names have changed between major versions. If a capture exits non-zero:
 and compare against the flags in `lib\PresentMon.ps1` (`--output_file`,
 `--timed`, `--terminate_after_timed`, `--stop_existing_session`, `--no_top`).
 Worth also trying `--track_hybrid_present`, which flags presents copied across
-adapters — directly relevant on a hybrid laptop.
+adapters, directly relevant on a hybrid laptop.
 
 PresentMon is **not** included by `jitterlab pack`. It is Intel's binary under
 its own licence; point people at the upstream release instead.
@@ -116,7 +116,7 @@ its own licence; point people at the upstream release instead.
 
 ## Reading an ETL
 
-Needs **Windows Performance Analyzer** from the Windows ADK — a large separate
+Needs **Windows Performance Analyzer** from the Windows ADK, a large separate
 download, not installed. There is no rush: capture the ETL while the fault is
 live, install WPA whenever.
 

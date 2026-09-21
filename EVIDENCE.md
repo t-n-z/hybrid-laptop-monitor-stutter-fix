@@ -14,12 +14,12 @@ Full read-only state snapshots (display adapters, modes, desktop screens, monito
 services, per-process GPU adapter) were taken during the stutter and after the fix, then diffed.
 **The only meaningful difference:**
 
-| Snapshot | State | Intel UHD Graphics | NVIDIA RTX 3060 → external | Desktop screens |
+| Snapshot | State | Intel UHD Graphics | NVIDIA RTX 3060 (external) | Desktop screens |
 |---|---|---|---|---|
-| 16:41, 16:42, 16:57 | stutter | **Availability 3 (running), 1920×1080 @ 144** | 3840×1600 @ 143 | 1 (3840×1600) |
-| 17:08, 17:12+ | healthy | **Availability 8 (offline), no mode** | 3840×1600 @ 143 | 1 (3840×1600) |
+| 16:41, 16:42, 16:57 | stutter | **Availability 3 (running), 1920x1080 @ 144** | 3840x1600 @ 143 | 1 (3840x1600) |
+| 17:08, 17:12+ | healthy | **Availability 8 (offline), no mode** | 3840x1600 @ 143 | 1 (3840x1600) |
 
-1920×1080 @ 144 Hz is the laptop's internal panel. The lid was closed throughout.
+1920x1080 @ 144 Hz is the laptop's internal panel. The lid was closed throughout.
 Same monitors, same screens, same registry values, same services in both states.
 
 ---
@@ -75,8 +75,8 @@ Raw CSVs in [`evidence/presentmon/`](evidence/presentmon/); computed figures in
 | `dwm.exe` frames | **1386** | **1380** | **2876** |
 | `dwm.exe` display gap median / p95 / max (ms) | 6.95 / 62.56 / 69.57 | 6.95 / 76.40 / 118.07 | 6.94 / 6.99 / 7.56 |
 | DWM gaps > 20 ms | 166 | 144 | **0** |
-| Stall lengths (most common) | 69 ms ×61, 62 ×55, 63 ×44 | 76 ms ×100, 83 ×19, 69 ×13 | — |
-| Stall period median (p5–p95) | 120.1 ms (118.9–121.8) | 141.1 ms (135.1–144.4) | — |
+| Stall lengths (most common) | 69 ms x61, 62 x55, 63 x44 | 76 ms x100, 83 x19, 69 x13 | none |
+| Stall period median (p5-p95) | 120.1 ms (118.9-121.8) | 141.1 ms (135.1-144.4) | none |
 | App frames presented | 2876 | 2813 | 2875 |
 | App present interval median (sd) | 6.94 ms (0.34) | 6.95 ms (4.38) | 6.94 ms (0.39) |
 | **App frames never displayed** | **1492 (52%)** | **1456 (52%)** | **1 (0%)** |
@@ -101,7 +101,7 @@ Reading it:
 | Intervention | Result |
 |---|---|
 | Ghost present | Stutter. Observed in 2 natural episodes (Intel adapter checked during them) plus 1 reproduced; in the third natural episode the adapter was not checked |
-| **Remove** the ghost: disable + re-enable the Intel adapter | **Cured, 4 for 4.** The stutter clears at the *disable*, before the re-enable: the screen blanks for 1–2 s while the adapter stays disabled for longer. |
+| **Remove** the ghost: disable + re-enable the Intel adapter | **Cured, 4 for 4.** The stutter clears at the *disable*, before the re-enable: the screen blanks for 1-2 s while the adapter stays disabled for longer. |
 | **Prevent** the ghost: hold the Intel adapter disabled, then switch the monitor off and on twice | **No stutter, 2 for 2.** Windows created a virtual `640x480@64` display while the monitor was off and dropped it cleanly on return. The Intel adapter stayed offline throughout. |
 
 The ghost path is necessary for the stutter, and removing it is sufficient to end it. Whether it causes DWM's stall
@@ -116,14 +116,14 @@ outside Windows. For a workaround the distinction does not matter.
 |---|---|
 | NVIDIA power management | Clocks pinned at P0, 1425/7001 MHz, through the stutter and the smooth moments |
 | VRAM pressure | 1.6 GB of 6 GB |
-| External display mode / link | 3840×1600 @ 143 on the NVIDIA adapter throughout |
+| External display mode / link | 3840x1600 @ 143 on the NVIDIA adapter throughout |
 | CPU load / DPC storm | CPU idle; DPC 0.00%, interrupt 0.39% |
 | A process rendering on the Intel adapter | None (GPU engine counters by adapter) |
 
 ## 7. Tried and did not help
 
 Restarting `dwm.exe`, `Win+Ctrl+Shift+B`, monitor power-cycle / replug, restarting `explorer.exe`, closing background
-apps, restarting both NVIDIA container services, UAC / secure-desktop switches, Ctrl+Alt+Del → Cancel, lock + screen
+apps, restarting both NVIDIA container services, UAC / secure-desktop switches, Ctrl+Alt+Del then Cancel, lock + screen
 off. **Why none of them work:** none of them touch the Intel adapter's display path.
 
 ## 8. Instruments that failed (for anyone repeating this)

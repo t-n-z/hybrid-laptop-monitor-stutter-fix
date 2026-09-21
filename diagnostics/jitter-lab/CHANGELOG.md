@@ -1,4 +1,4 @@
-# Changelog — JitterLab
+# Changelog: JitterLab
 
 ## 1.1.0 - 2026-09-21 (first live use)
 
@@ -30,7 +30,7 @@ First real jitter captured. The kit found the mechanism: see `../../EVIDENCE.md`
 - **`DwmGetCompositionTimingInfo`** fails (`0x88980090`) during a jitter and when elevated too. Closed as "does not work
   on this machine".
 
-## 1.0.0 — 2026-09-21
+## 1.0.0 (2026-09-21)
 
 First build. **Staged only: nothing has been run, no watcher is active, no
 scheduled task created, `C:\JitterLab` not yet created.**
@@ -42,7 +42,7 @@ but start self clearing if it's more than that... cleanly distributable."*
 
 ### Included
 
-- **DWM composition timing** via a `DwmGetCompositionTimingInfo` P/Invoke —
+- **DWM composition timing** via a `DwmGetCompositionTimingInfo` P/Invoke:
   missed, dropped and late frames, compose rate vs refresh rate. Chosen as the
   headline metric because the symptom (composited content judders, hardware
   cursor does not) is the definition of a compositor missing vertical blanks.
@@ -51,7 +51,7 @@ but start self clearing if it's more than that... cleanly distributable."*
   and topology, `GraphicsDrivers\Configuration` sets, DWM registry, per-process
   GPU adapter LUID, PnP device status, `dwm.exe` handle/thread/working-set
   growth, services, process inventory, NVIDIA telemetry.
-- **Continuous sampler** — per-adapter GPU use, DPC and interrupt time, `dwm.exe`
+- **Continuous sampler**: per-adapter GPU use, DPC and interrupt time, `dwm.exe`
   resources, memory; NVIDIA clocks, throttle reasons and PCIe link gen/width via
   a single persistent `nvidia-smi --loop` process rather than repeated spawns.
 - **Snapshot differ** classifying changes as SIGNAL (should not drift during a
@@ -63,7 +63,7 @@ but start self clearing if it's more than that... cleanly distributable."*
 - **Disk janitor**: 300 MB budget, runs every 10 minutes and after every
   capture. Deletes oldest-first, ETW traces first. `keep\` is never touched.
 - **Self-test** that parses every script, validates config and the WPR profile,
-  exercises the janitor and differ against fakes, and probes capabilities —
+  exercises the janitor and differ against fakes, and probes capabilities,
   without collecting anything or touching `DataDir`.
 
 ### Deliberate decisions
@@ -89,14 +89,14 @@ but start self clearing if it's more than that... cleanly distributable."*
   headline no-admin metric; the README and METRICS now say plainly that it
   fails here and that **frame pacing therefore requires elevation** via
   PresentMon or ETW. The call is still made every second so that a *change* in
-  that HRESULT is captured — if it starts answering after a reboot, during a
+  that HRESULT is captured: if it starts answering after a reboot, during a
   jitter, or after Ctrl+Alt+D, that correlation beats the counters.
   **Untested:** whether it succeeds in an elevated process. One probe on the
   next elevated pass would settle it.
 - **`Add-Type -UsingNamespace System.Runtime.InteropServices` is an error, not a
   warning**, because `-MemberDefinition` already emits that using directive and
   the compiler runs with warnings-as-errors. Removed.
-- **`$pid` is a read-only PowerShell automatic variable** — the snapshot
+- **`$pid` is a read-only PowerShell automatic variable**: the snapshot
   collector assigned to it and would have thrown at runtime. Renamed.
 - **`MaxTraceCount` lowered from 6 to 3.** The self-test caught that 6 x 64 MB
   exceeded the 300 MB budget, so traces would have been deleted almost as fast
@@ -104,7 +104,7 @@ but start self clearing if it's more than that... cleanly distributable."*
 
 ### Known gaps
 
-- No per-rail voltage telemetry — not exposed on this laptop without HP tooling.
+- No per-rail voltage telemetry: not exposed on this laptop without HP tooling.
 - True DPC/ISR latency needs a kernel driver; `% DPC Time` is a proxy.
 - Reading an ETL needs Windows Performance Analyzer (Windows ADK), not installed.
 - The SIGNAL/noise classifier in `Diff.ps1` is a heuristic. Use `-IncludeNoise`

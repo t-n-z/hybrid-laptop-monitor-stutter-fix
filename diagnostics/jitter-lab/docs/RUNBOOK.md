@@ -1,4 +1,4 @@
-# Runbook — capturing evidence when the stutter happens
+# Runbook: capturing evidence when the stutter happens
 
 You only need this if you want to **measure** the problem (for example to add your machine's data to the issue
 tracker, or to check whether you have the same bug). To just **fix** it, use `../../../fix/`.

@@ -1,10 +1,10 @@
-# Metrics — what each number means, and what "bad" looks like
+# Metrics: what each number means, and what "bad" looks like
 
 Ordered by how likely it is to crack the case.
 
 ---
 
-## 1. DWM composition timing — intended headline, DOES NOT WORK HERE
+## 1. DWM composition timing: intended headline, DOES NOT WORK HERE
 
 Source: `DwmGetCompositionTimingInfo` (dwmapi.dll), sampled every second into
 `live\dwm-*.csv`. No admin. Cost is microseconds.
@@ -12,23 +12,23 @@ Source: `DwmGetCompositionTimingInfo` (dwmapi.dll), sampled every second into
 > **Status on the test laptop, 2026-09-21: unavailable.** The call returns
 > `hr=0x88980090` with a null, desktop or shell window handle, unelevated,
 > while the display was healthy. `Marshal.SizeOf` on the struct is 320 bytes
-> and the value round-trips intact, so this is not a marshalling fault — the
+> and the value round-trips intact, so this is not a marshalling fault; the
 > API is declining to answer on this machine.
 >
 > **Consequence:** frame pacing must come from PresentMon or ETW, both of which
 > need elevation. There is no unelevated frame-pacing metric on this box.
 >
 > **Why it is still sampled every second:** the HRESULT is recorded in the
-> `note` column. If it ever starts working — after a reboot, during a jitter,
-> after Ctrl+Alt+D — that change is itself a finding, and a more interesting
+> `note` column. If it ever starts working (after a reboot, during a jitter,
+> after Ctrl+Alt+D), that change is itself a finding, and a more interesting
 > one than a healthy counter would have been. Untested: whether it succeeds in
 > an elevated process. Worth one probe on the next elevated pass.
 
 The rest of this section describes what the columns mean **if** the API starts
 answering, on this machine or another.
 
-This is the compositor reporting on itself. The symptom — composited content
-juddering while the hardware cursor stays smooth — *is* the definition of DWM
+This is the compositor reporting on itself. The symptom (composited content
+juddering while the hardware cursor stays smooth) *is* the definition of DWM
 failing to land frames on vertical blanks. These counters either show that or
 they do not, and either answer is worth having.
 
@@ -45,15 +45,15 @@ they do not, and either answer is worth having.
 
 **How to read it:** compare a jitter window against a healthy window from the
 same session. If missed/dropped stay at zero through a visible judder, then DWM
-thinks it is fine and the fault is downstream — in scanout or the display
-pipeline — which would be a major narrowing.
+thinks it is fine and the fault is downstream, in scanout or the display
+pipeline, which would be a major narrowing.
 
 **Known gap:** returns an error on the secure desktop (UAC prompt, lock screen).
 Those rows are written with the error in the `note` column. Expected.
 
 ---
 
-## 2. State snapshots — the good-vs-bad diff
+## 2. State snapshots: the good-vs-bad diff
 
 Source: `Snapshot.ps1`, every 15 minutes into `snapshots\`, plus on demand.
 Read-only, no admin.
@@ -65,28 +65,28 @@ different between the machine at 04:00 and the same machine at 07:15?**
 Captured, and why:
 
 - **Display modes and topology** (`Win32_VideoController`, `Screen.AllScreens`,
-  `WmiMonitorID`) — a silent mode or topology change is the most direct
+  `WmiMonitorID`): a silent mode or topology change is the most direct
   possible explanation.
-- **`GraphicsDrivers\Configuration` subkey list** — Windows records each display
+- **`GraphicsDrivers\Configuration` subkey list**: Windows records each display
   topology it has seen. A new or changed set between good and bad would be a
   direct hit on the topology-rebuild theory.
-- **DWM registry key** — `OverlayTestMode` is 5 on this machine (MPO disabled).
+- **DWM registry key**: `OverlayTestMode` is 5 on this machine (MPO disabled).
   If anything ever changes it, that shows here.
-- **Per-process GPU adapter LUID** — which adapter each process is rendering on.
+- **Per-process GPU adapter LUID**: which adapter each process is rendering on.
   A process migrating to the Intel adapter is exactly what hypothesis 1
   predicts. Note the limitation: only processes using a GPU *engine* during the
   sample appear, so absence is weak evidence.
-- **PnP status of both display devices** — an adapter entering a degraded state.
-- **`dwm.exe` handles, threads, working set** — a slow resource leak in the
+- **PnP status of both display devices**: an adapter entering a degraded state.
+- **`dwm.exe` handles, threads, working set**: a slow resource leak in the
   compositor over hours would show as monotonic growth. This is one of the
   better fits for a fault that needs hours to appear.
-- **Services** — the NVIDIA containers, `UxSms` (the DWM session manager).
-- **Process inventory** — what appeared between the last good and the first bad.
+- **Services**: the NVIDIA containers, `UxSms` (the DWM session manager).
+- **Process inventory**: what appeared between the last good and the first bad.
 
 `JitterLab.ps1 diff` splits differences into **SIGNAL** (should not drift
 during a session) and **noise** (counters, utilisation, timestamps). Start with
 SIGNAL. If it is empty, re-run with `-IncludeNoise` before concluding nothing
-changed — the classifier is a heuristic, not gospel.
+changed; the classifier is a heuristic, not gospel.
 
 ---
 
@@ -108,12 +108,12 @@ Source: one persistent `nvidia-smi --loop` process into `live\nvidia-*.csv`.
 
 Source: `Get-Counter` every 5 s into `live\sys-*.csv`.
 
-- `gpu_nvidia_pct` / `gpu_intel_pct` — GPU engine use split by adapter LUID. The
+- `gpu_nvidia_pct` / `gpu_intel_pct`: GPU engine use split by adapter LUID. The
   continuous version of the per-process adapter check.
-- `dpc_pct`, `interrupt_pct` — measured at 0.00% and 0.39% during a jitter, so a
+- `dpc_pct`, `interrupt_pct`: measured at 0.00% and 0.39% during a jitter, so a
   DPC storm is **disconfirmed**. Sampled continuously in case it ever isn't.
-- `dwm_handles`, `dwm_threads`, `dwm_ws_mb`, `dwm_cpu_sec` — the leak watch.
-- `avail_mb` — memory pressure.
+- `dwm_handles`, `dwm_threads`, `dwm_ws_mb`, `dwm_cpu_sec`: the leak watch.
+- `avail_mb`: memory pressure.
 
 **Limitation:** `% DPC Time` is a coarse proxy. True DPC latency needs a kernel
 driver; the ETW trace is the right instrument if DPCs ever look implicated.
@@ -126,19 +126,19 @@ Source: `wpr.exe` with `profiles\jitterlab.wprp`, capped at 64 MB.
 
 Providers and what they answer:
 
-- **`Microsoft-Windows-DxgKrnl`** — presents, flip queue, vblank/VSync
+- **`Microsoft-Windows-DxgKrnl`**: presents, flip queue, vblank/VSync
   interrupts, DMA packets, adapter events. Answers: are vblank interrupts
   regular? Are presents queued on time and completing late?
-- **`Microsoft-Windows-Dwm-Core`** — the compositor's frame lifecycle, the
+- **`Microsoft-Windows-Dwm-Core`**: the compositor's frame lifecycle, the
   detailed version of section 1.
-- **`Microsoft-Windows-Dwm-Api`** — what applications are asking of DWM.
-- **`Microsoft-Windows-DXGI`** — swap chain creation and presentation-mode
+- **`Microsoft-Windows-Dwm-Api`**: what applications are asking of DWM.
+- **`Microsoft-Windows-DXGI`**: swap chain creation and presentation-mode
   changes. Directly relevant to the composed-flip/independent-flip theory.
 
 Always capture in **matched pairs**: one during the jitter, one after Ctrl+Alt+D.
 
 Reading the ETL needs Windows Performance Analyzer (Windows ADK), a separate
-download. Capture first — the ETL is the perishable evidence and WPA can be
+download. Capture first: the ETL is the perishable evidence and WPA can be
 installed whenever.
 
 ---
@@ -164,13 +164,13 @@ between the jitter capture and the healthy one.
 
 ## What is NOT measured, and why
 
-- **Per-rail voltages** — not exposed on this laptop without HP's own tooling.
+- **Per-rail voltages**: not exposed on this laptop without HP's own tooling.
   GPU-level power draw is the closest available.
-- **Display link/DP lane state** — no vendor-neutral API. The dock and cable
+- **Display link/DP lane state**: no vendor-neutral API. The dock and cable
   have already been effectively ruled out by replug and monitor power-cycle
   tests failing.
-- **True DPC/ISR latency** — needs a kernel driver (LatencyMon or similar). The
+- **True DPC/ISR latency**: needs a kernel driver (LatencyMon or similar). The
   ETW trace covers this ground adequately for now.
-- **Panel-side frame delivery** — would need a camera or a hardware capture
+- **Panel-side frame delivery**: would need a camera or a hardware capture
   device. If DWM's counters ever look clean through a visible judder, this
   becomes the next thing worth solving.
